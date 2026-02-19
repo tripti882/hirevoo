@@ -57,6 +57,11 @@ class User extends Authenticatable
         return $this->hasMany(JobApplication::class);
     }
 
+    public function employerJobs()
+    {
+        return $this->hasMany(EmployerJob::class, 'user_id');
+    }
+
     public function isCandidate(): bool
     {
         return $this->role === 'candidate';

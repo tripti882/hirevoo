@@ -3,16 +3,95 @@
  * Primary: Deep Navy #0B1F3B
  * Secondary: Emerald Green #10B981
  * Accent: Light Grey #F3F4F6
+ * Font: SN Pro by Tobias Whetton / Supernotes (OFL 1.1, via Fontsource)
  */
 
 :root {
     --hirevo-primary: #0B1F3B;
     --hirevo-secondary: #10B981;
     --hirevo-accent: #F3F4F6;
+    --hirevo-font: 'SN Pro', -apple-system, BlinkMacSystemFont, sans-serif;
     --bs-primary: #0B1F3B;
     --bs-primary-rgb: 11, 31, 59;
     --bs-secondary: #10B981;
     --bs-secondary-rgb: 16, 185, 129;
+}
+
+/* Typography – SN Pro across the full website */
+html,
+body,
+.employer-body {
+    font-family: var(--hirevo-font);
+}
+input,
+button,
+select,
+textarea,
+.form-control,
+.form-select,
+.btn,
+.navbar,
+.nav-link,
+.dropdown-menu {
+    font-family: var(--hirevo-font);
+}
+
+/* Logo – responsive sizes */
+.navbar-brand .hirevo-logo {
+    height: 64px !important;
+    width: auto;
+    max-width: 200px;
+}
+.employer-sidebar .sidebar-brand .hirevo-logo {
+    height: 32px !important;
+    width: auto;
+    max-width: 140px;
+}
+.bg-auth .hirevo-logo {
+    height: 48px !important;
+    width: auto;
+    max-width: 180px;
+}
+@media (min-width: 576px) {
+    .navbar-brand .hirevo-logo { height: 72px !important; max-width: 220px; }
+    .bg-auth .hirevo-logo { height: 56px !important; max-width: 220px; }
+}
+@media (min-width: 768px) {
+    .navbar-brand .hirevo-logo { height: 88px !important; max-width: 260px; }
+    .employer-sidebar .sidebar-brand .hirevo-logo { height: 40px !important; max-width: 160px; }
+    .bg-auth .hirevo-logo { height: 72px !important; max-width: 280px; }
+}
+@media (min-width: 992px) {
+    .navbar-brand .hirevo-logo { height: 110px !important; max-width: 320px; }
+    .employer-sidebar .sidebar-brand .hirevo-logo { height: 58px !important; max-width: 200px; }
+    .bg-auth .hirevo-logo { height: 82px !important; max-width: 300px; }
+}
+
+/* Prevent navbar overlapping content (fixed top-bar + navbar) */
+body .main-content {
+    padding-top: 170px !important;
+}
+body .page-content {
+    padding-top: 0 !important;
+}
+/* Auth pages: extra top spacing so form is fully below navbar */
+section.bg-auth {
+    padding-top: 2rem !important;
+    padding-bottom: 4rem !important;
+}
+@media (max-width: 991.98px) {
+    body .main-content {
+        padding-top: 140px !important;
+    }
+}
+@media (max-width: 575.98px) {
+    body .main-content {
+        padding-top: 120px !important;
+    }
+    section.bg-auth {
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+    }
 }
 
 /* Buttons */
@@ -56,6 +135,15 @@ a.text-primary {
 }
 .bg-success-subtle {
     background-color: rgba(16, 185, 129, 0.15);
+}
+
+.bg-warning-subtle {
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.avatar-sm {
+    width: 3rem;
+    height: 3rem;
 }
 
 /* Light sections */
@@ -112,6 +200,41 @@ a.text-primary {
     box-shadow: 0 0 0 0.2rem rgba(11, 31, 59, 0.25);
 }
 
+/* Compact select to match form-control-sm height */
+.form-select.form-select-sm,
+.form-select-sm {
+    height: calc(1.5em + 0.5rem + 2px) !important;
+    min-height: 0 !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+    padding-left: 0.5rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+}
+
+/* Employer post/edit job: prevent theme from making selects oversized */
+.post-job-page .form-select {
+    height: calc(1.5em + 0.75rem + 2px) !important;
+    min-height: 0 !important;
+    max-height: none;
+}
+.post-job-page .form-select.status-select {
+    max-width: 220px;
+}
+
+/* Employer profile */
+.object-fit-cover { object-fit: cover; }
+
+/* Employer dashboard */
+.fw-600 { font-weight: 600; }
+
+/* Employer dashboard filter pills */
+.filter-pill.active {
+    background-color: var(--hirevo-primary) !important;
+    border-color: var(--hirevo-primary) !important;
+    color: #fff !important;
+}
+
 /* Back to top */
 #back-to-top {
     background-color: var(--hirevo-primary) !important;
@@ -119,4 +242,163 @@ a.text-primary {
 }
 #back-to-top:hover {
     background-color: var(--hirevo-secondary) !important;
+}
+
+/* ========== Responsive / Mobile ========== */
+html { -webkit-text-size-adjust: 100%; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+body { overflow-x: hidden; }
+img, video, iframe { max-width: 100%; height: auto; }
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Touch-friendly minimum sizes */
+@media (max-width: 991.98px) {
+    .btn, .form-control, .form-select {
+        min-height: 44px;
+    }
+    .nav-link {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Main site: top bar on mobile */
+@media (max-width: 767.98px) {
+    .top-bar .topbar-social-menu {
+        display: none !important;
+    }
+    .top-bar .fs-13 { font-size: 0.75rem !important; }
+}
+
+/* Container fluid on small screens */
+@media (max-width: 575.98px) {
+    .container-fluid.custom-container,
+    .custom-container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Employer: profile page – avatar circle */
+.profile-avatar-circle {
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+}
+@media (max-width: 767.98px) {
+    .employer-content .profile-cover { height: 80px !important; }
+    .profile-avatar-circle {
+        width: 80px !important;
+        height: 80px !important;
+        margin-top: -40px !important;
+    }
+    .employer-content .card-body.p-4 {
+        padding: 1rem !important;
+    }
+}
+
+/* Job card dropdown: visible menu button (fixes empty small box) */
+.employer-job-card-menu-btn {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: 0;
+    border-radius: 6px;
+    color: #6b7280 !important;
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.employer-job-card-menu-btn:hover {
+    background: #f3f4f6;
+    color: var(--hirevo-primary) !important;
+    border-color: #d1d5db;
+}
+/* Use fallback character so the control is never an empty box (icon font may not load) */
+.employer-job-card-menu-btn .employer-job-card-menu-icon {
+    display: none;
+}
+.employer-job-card-menu-btn .employer-job-card-menu-fallback {
+    font-size: 1.25rem;
+    line-height: 1;
+    font-weight: 600;
+}
+
+/* Employer: applicant profile cards (applications page) */
+.applicant-card .detail-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #6b7280;
+    font-weight: 600;
+}
+.applicant-card .applicant-detail {
+    font-size: 0.9rem;
+}
+.applicant-card .applicant-name {
+    font-size: 1.1rem;
+}
+.applicant-card .application-status-select {
+    min-width: 130px;
+    max-width: 160px;
+}
+.applicant-skills {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+.applicant-card .skill-tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: #f3f4f6;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #374151;
+}
+.applicant-card .skill-tag.skill-more {
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Employer: job cards and tabs on mobile */
+@media (max-width: 575.98px) {
+    .employer-tabs .tab-link {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8125rem;
+    }
+    .employer-job-card .d-flex.gap-2 {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .employer-job-card .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .applicant-card .application-status-select {
+        max-width: 100%;
+    }
+}
+
+/* Post job page: type buttons wrap */
+@media (max-width: 767.98px) {
+    .post-job-page .btn-group.flex-wrap .btn {
+        flex: 1 1 auto;
+    }
+}
+
+/* Auth: stack and spacing on mobile */
+@media (max-width: 991.98px) {
+    .bg-auth .auth-box .row > [class*="col-"] {
+        max-width: 100%;
+    }
+    .bg-auth .card-body.p-4 {
+        padding: 1.25rem !important;
+    }
+    .bg-auth .auth-content.card-body.p-5 {
+        padding: 1.5rem !important;
+    }
 }

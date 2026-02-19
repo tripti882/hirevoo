@@ -11,6 +11,12 @@
 
     <link rel="shortcut icon" href="{{ asset($theme.'/assets/images/favicon.ico') }}">
 
+    <!-- SN Pro by Tobias Whetton / Supernotes (Fontsource) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/sn-pro@5.2.6/400.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/sn-pro@5.2.6/500.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/sn-pro@5.2.6/600.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/sn-pro@5.2.6/700.css">
+
     <link rel="stylesheet" href="{{ asset($theme.'/assets/libs/choices.js/public/assets/styles/choices.min.css') }}">
     <link rel="stylesheet" href="{{ asset($theme.'/assets/libs/swiper/swiper-bundle.min.css') }}">
     <link href="{{ asset($theme.'/assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet">
@@ -91,9 +97,9 @@
         <!-- Navbar Start -->
         <nav class="navbar navbar-expand-lg fixed-top sticky" id="navbar">
             <div class="container-fluid custom-container">
-                <a class="navbar-brand text-dark fw-bold me-auto" href="{{ route('home') }}">
-                    <img src="{{ asset($theme.'/assets/images/logo-dark.png') }}" height="22" alt="" class="logo-dark">
-                    <img src="{{ asset($theme.'/assets/images/logo-light.png') }}" height="22" alt="" class="logo-light">
+                <a class="navbar-brand text-dark fw-bold me-auto d-flex align-items-center" href="{{ route('home') }}">
+                    <img src="{{ asset('images/hirevo-logo.png') }}" alt="Hirevo" class="hirevo-logo logo-dark">
+                    <img src="{{ asset('images/hirevo-logo.png') }}" alt="Hirevo" class="hirevo-logo logo-light">
                 </a>
                 <div>
                     <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-label="Toggle navigation">
@@ -102,21 +108,60 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav mx-auto navbar-center">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('job-list') }}">Job Goals</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('pricing') }}">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('about') }}">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('contact') }}">Contact</a>
-                        </li>
+                        @auth
+                        @if(auth()->user()->isReferrer())
+                            {{-- Employer dashboard navigation --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('employer.dashboard') ? 'active' : '' }}" href="{{ route('employer.dashboard') }}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('employer.jobs.*') ? 'active' : '' }}" href="{{ route('employer.jobs.index') }}">My Jobs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('employer.jobs.create') ? 'active' : '' }}" href="{{ route('employer.jobs.create') }}">Post Job</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('employer.profile') ? 'active' : '' }}" href="{{ route('employer.profile') }}">Company Profile</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">More</a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ route('pricing') }}">Pricing</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('about') }}">About</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('contact') }}">Contact</a></li>
+                                </ul>
+                            </li>
+                        @elseif(auth()->user()->isAdmin())
+                            <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="{{ route('admin.employers.index') }}">Employers</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('pricing') }}">Pricing</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+                        @else
+                        @endif
+                        @endauth
+                        @guest
+                            <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('job-list') }}">Job Goals</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('job-openings') }}">Job openings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('pricing') }}">Pricing</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+                        @endguest
+                        @auth
+                        @if(!auth()->user()->isReferrer() && !auth()->user()->isAdmin())
+                            {{-- Candidate / default logged-in nav --}}
+                            <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('job-list') }}">Job Goals</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('job-openings') }}">Job openings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('pricing') }}">Pricing</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+                        @endif
+                        @endauth
                     </ul>
                     <ul class="header-menu list-inline d-flex align-items-center mb-0">
                         @guest
@@ -128,7 +173,7 @@
                         <li class="list-inline-item border-start border-2 border-secondary ms-2 ps-3 me-2" style="height: 24px;"></li>
                         <li class="list-inline-item align-items-center d-flex">
                             <span class="text-muted fs-13 me-2 d-none d-lg-inline">Employer</span>
-                            <a href="{{ route('login') }}" class="nav-link text-primary fw-medium p-0 me-2">Sign in</a>
+                            <a href="{{ route('login', ['role' => 'referrer']) }}" class="nav-link text-primary fw-medium p-0 me-2">Log in</a>
                             <a href="{{ route('register', ['role' => 'referrer']) }}" class="btn btn-primary btn-sm rounded-pill px-3">Sign up</a>
                         </li>
                         @else
@@ -153,7 +198,16 @@
                                 <span class="d-none d-md-inline-block fw-medium">Hi, {{ auth()->user()->name }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userdropdown">
-                                <li><a class="dropdown-item" href="{{ route('profile') }}">My Profile</a></li>
+                                @if(auth()->user()->isReferrer())
+                                    <li><a class="dropdown-item" href="{{ route('employer.dashboard') }}">Employer Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('employer.profile') }}">Company Profile</a></li>
+                                @elseif(auth()->user()->isAdmin())
+                                    <li><a class="dropdown-item" href="{{ route('admin.employers.index') }}">Manage Employers</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('profile') }}">My Profile</a></li>
+                                @else
+                                    <li><a class="dropdown-item" href="{{ route('profile') }}">My Profile</a></li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
                             </ul>
                         </li>

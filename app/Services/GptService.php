@@ -15,10 +15,17 @@ class GptService
 
     protected int $maxTokens = 1200;
 
+    protected ?string $lastError = null;
+
     public function __construct()
     {
         $this->apiKey = config('services.openai.key') ?: env('OPENAI_API_KEY');
         $this->model = config('services.openai.model', env('OPENAI_MODEL', 'gpt-4o-mini'));
+    }
+
+    public function getLastError(): ?string
+    {
+        return $this->lastError;
     }
 
     public function isAvailable(): bool
@@ -45,6 +52,29 @@ class GptService
                     . "3. Education or notable certifications in one short phrase.\n"
                     . "4. One sentence on profile type (e.g. 'Strong full-stack profile' or 'Early-career developer with growth potential').\n\n"
                     . "Write in third person. No bullet points. Resume text:\n---\n" . $truncated,
+            ],
+        ];
+        $response = $this->chat($messages);
+        return $response ? trim($response) : null;
+    }
+
+    /**
+     * Generate a full job description from a job title. Professional, ready to edit.
+     */
+    public function generateJobDescription(string $jobTitle): ?string
+    {
+        $title = trim($jobTitle);
+        if ($title === '') {
+            return null;
+        }
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => 'You are an HR expert writing job descriptions. Output only the job description text. Use clear sections: About the role, Responsibilities, Requirements/Qualifications, Nice to have (optional). Use bullet points where appropriate. Write in a professional, inclusive tone. No preamble like "Here is the description".',
+            ],
+            [
+                'role' => 'user',
+                'content' => "Write a complete job description for the following job title. Include: a short intro (2-3 sentences), key responsibilities (4-6 bullets), required qualifications/skills (4-6 bullets), and optional nice-to-have. Keep it practical and scannable.\n\nJob title: " . $title,
             ],
         ];
         $response = $this->chat($messages);
@@ -165,7 +195,9 @@ class GptService
 
     protected function chat(array $messages): ?string
     {
+        $this->lastError = null;
         if (! $this->apiKey) {
+            $this->lastError = 'OpenAI API key is not set. Add OPENAI_API_KEY to your .env file.';
             return null;
         }
         try {
@@ -179,13 +211,26 @@ class GptService
                 ]);
 
             if (! $response->successful()) {
-                Log::warning('OpenAI API error', ['status' => $response->status(), 'body' => $response->body()]);
+                $status = $response->status();
+                if ($status === 429) {
+                    $this->lastError = 'AI usage limit reached. Please write the description manually or check your OpenAI plan and billing.';
+                } else {
+                    $body = $response->json();
+                    $message = null;
+                    if (is_array($body) && isset($body['error'])) {
+                        $err = $body['error'];
+                        $message = is_array($err) ? ($err['message'] ?? $err['code'] ?? null) : (string) $err;
+                    }
+                    $this->lastError = 'OpenAI API error (' . $status . '): ' . (is_string($message) && $message !== '' ? $message : substr($response->body(), 0, 200));
+                }
+                Log::warning('OpenAI API error', ['status' => $status, 'body' => $response->body()]);
                 return null;
             }
             $data = $response->json();
             $content = $data['choices'][0]['message']['content'] ?? null;
             return $content ? trim($content) : null;
         } catch (\Throwable $e) {
+            $this->lastError = 'Request failed: ' . $e->getMessage();
             Log::warning('OpenAI request failed', ['message' => $e->getMessage()]);
             return null;
         }

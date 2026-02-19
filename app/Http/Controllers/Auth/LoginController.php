@@ -27,6 +27,10 @@ class LoginController extends Controller
             if ($redirect && \Illuminate\Support\Str::startsWith($redirect, '/') && ! \Illuminate\Support\Str::startsWith($redirect, '//')) {
                 return redirect()->to($redirect);
             }
+            $user = Auth::user();
+            if ($user->isReferrer()) {
+                return redirect()->intended(route('employer.dashboard'));
+            }
             return redirect()->intended(route('home'));
         }
 

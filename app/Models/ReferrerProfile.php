@@ -9,13 +9,17 @@ class ReferrerProfile extends Model
 {
     protected $fillable = [
         'user_id', 'company_name', 'company_email', 'company_email_verified',
-        'designation', 'department', 'is_approved', 'approved_at',
+        'designation', 'department', 'profile_photo',
+        'gstin', 'gst_verified', 'company_legal_name', 'company_address', 'invoice_consent',
+        'is_approved', 'approved_at', 'credits',
     ];
 
     protected function casts(): array
     {
         return [
             'company_email_verified' => 'boolean',
+            'gst_verified' => 'boolean',
+            'invoice_consent' => 'boolean',
             'is_approved' => 'boolean',
             'approved_at' => 'datetime',
         ];

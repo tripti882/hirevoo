@@ -50,6 +50,10 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+        if ($user->isReferrer()) {
+            return redirect(route('employer.dashboard'));
+        }
+
         return redirect(route('home'));
     }
 }
