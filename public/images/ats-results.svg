@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <rect width="400" height="260" rx="16" fill="url(#bg2)"/>
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="400" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1F3B" stop-opacity="0.03"/>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <!-- Gauge circle -->
+  <circle cx="200" cy="115" r="70" fill="none" stroke="#0B1F3B" stroke-opacity="0.1" stroke-width="12"/>
+  <circle cx="200" cy="115" r="70" fill="none" stroke="#10B981" stroke-width="12" stroke-linecap="round" stroke-dasharray="220 220" stroke-dashoffset="55" transform="rotate(-90 200 115)"/>
+  <!-- Score text -->
+  <text x="200" y="115" text-anchor="middle" dominant-baseline="middle" font-family="system-ui, sans-serif" font-size="36" font-weight="700" fill="#10B981">75%</text>
+  <text x="200" y="145" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#0B1F3B" fill-opacity="0.6">ATS Score</text>
+  <!-- Doc icon -->
+  <rect x="155" y="185" width="90" height="50" rx="6" fill="#0B1F3B" fill-opacity="0.06" stroke="#0B1F3B" stroke-opacity="0.12"/>
+  <line x1="170" y1="200" x2="250" y2="200" stroke="#10B981" stroke-width="1.5"/>
+  <line x1="170" y1="212" x2="235" y2="212" stroke="#0B1F3B" stroke-opacity="0.2" stroke-width="1"/>
+</svg>

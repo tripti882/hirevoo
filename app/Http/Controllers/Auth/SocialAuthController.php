@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\CandidateProfile;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+
+class SocialAuthController extends Controller
+{
+    /**
+     * Redirect to Google.
+     */
+    public function redirectToGoogle(Request $request): RedirectResponse
+    {
+        $this->storeIntendedInSession($request);
+        return Socialite::driver('google')
+            ->scopes(['openid', 'email', 'profile'])
+            ->redirect();
+    }
+
+    /**
+     * Redirect to Microsoft (Azure).
+     */
+    public function redirectToMicrosoft(Request $request): RedirectResponse
+    {
+        $this->storeIntendedInSession($request);
+        return Socialite::driver('azure')->redirect();
+    }
+
+    /**
+     * Handle Google callback.
+     */
+    public function handleGoogleCallback(): RedirectResponse
+    {
+        return $this->handleProviderCallback('google');
+    }
+
+    /**
+     * Handle Microsoft callback.
+     */
+    public function handleMicrosoftCallback(): RedirectResponse
+    {
+        return $this->handleProviderCallback('azure');
+    }
+
+    protected function storeIntendedInSession(Request $request): void
+    {
+        $role = $request->query('role');
+        if (in_array($role, ['candidate', 'referrer', 'edtech'], true)) {
+            session(['oauth_intended_role' => $role]);
+        }
+        $redirect = $request->query('redirect');
+        if ($redirect && Str::startsWith($redirect, '/') && ! Str::startsWith($redirect, '//')) {
+            session(['oauth_intended_redirect' => $redirect]);
+        }
+    }
+
+    protected function handleProviderCallback(string $driver): RedirectResponse
+    {
+        try {
+            $oauthUser = Socialite::driver($driver)->user();
+        } catch (\Throwable $e) {
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Could not sign in with this provider. Please try again or use email.']);
+        }
+
+        $email = $oauthUser->getEmail();
+        if (! $email) {
+            return redirect()->route('login')
+                ->withErrors(['email' => 'No email received from provider. Please use email sign up.']);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            Auth::login($user, true);
+            return $this->redirectAfterLogin();
+        }
+
+        $intendedRole = session('oauth_intended_role', 'candidate');
+        if (! in_array($intendedRole, ['candidate', 'referrer', 'edtech'], true)) {
+            $intendedRole = 'candidate';
+        }
+
+        $user = User::create([
+            'name' => $oauthUser->getName() ?: Str::before($email, '@'),
+            'email' => $email,
+            'phone' => null,
+            'password' => bcrypt(Str::random(32)),
+            'role' => $intendedRole,
+        ]);
+
+        if ($intendedRole === 'candidate') {
+            CandidateProfile::firstOrCreate(
+                ['user_id' => $user->id],
+                []
+            );
+        }
+
+        Auth::login($user, true);
+        return $this->redirectAfterLogin();
+    }
+
+    protected function clearOAuthSession(): void
+    {
+        session()->forget(['oauth_intended_role', 'oauth_intended_redirect']);
+    }
+
+    protected function redirectAfterLogin(): RedirectResponse
+    {
+        $redirect = session('oauth_intended_redirect');
+        $this->clearOAuthSession();
+        if ($redirect) {
+            return redirect()->to($redirect);
+        }
+        return redirect()->intended(route('home'));
+    }
+}

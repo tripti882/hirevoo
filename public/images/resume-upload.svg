@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" fill="none">
+  <rect width="400" height="280" rx="16" fill="url(#g1)"/>
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="400" y2="280" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1F3B" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0.06"/>
+    </linearGradient>
+  </defs>
+  <!-- Document -->
+  <rect x="140" y="50" width="120" height="150" rx="8" fill="#0B1F3B" fill-opacity="0.08" stroke="#0B1F3B" stroke-opacity="0.15" stroke-width="2"/>
+  <line x1="160" y1="90" x2="280" y2="90" stroke="#10B981" stroke-width="2" stroke-linecap="round"/>
+  <line x1="160" y1="110" x2="260" y2="110" stroke="#0B1F3B" stroke-opacity="0.2" stroke-width="1.5"/>
+  <line x1="160" y1="130" x2="270" y2="130" stroke="#0B1F3B" stroke-opacity="0.2" stroke-width="1.5"/>
+  <line x1="160" y1="150" x2="250" y2="150" stroke="#0B1F3B" stroke-opacity="0.2" stroke-width="1.5"/>
+  <!-- Upload arrow -->
+  <circle cx="200" cy="230" r="36" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="2"/>
+  <path d="M200 205v30M200 205l-8 8M200 205l8 8" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M185 250h30" stroke="#10B981" stroke-width="2" stroke-linecap="round"/>
+</svg>
